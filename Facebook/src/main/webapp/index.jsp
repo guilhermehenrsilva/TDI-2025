@@ -5,9 +5,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<link rel="stylesheet" href="css/bootstrap-icons.css">
+<title>Usuários</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap-icons.css">
 </head>
 <body>
 	<div class="container">
@@ -20,6 +20,8 @@
 					<th scope="col">nome</th>
 					<th scope="col">sexo</th>
 					<th scope="col">email</th>
+					<th scope="col">Editar</th>
+					<th scope="col">Remover</th>
 				  </tr>
 				</thead>
 				<tbody>
@@ -29,6 +31,20 @@
 				      <td>${usuario.getName()}</td>
 				      <td>${usuario.getGender()}</td>
 				      <td>${usuario.getEmail()}</td>
+				      
+				      <td>
+				      <a href="${pageContext.request.contextPath}/user/update?userId=${usuario.getId()}" 
+				      	 class="bi bi-pencil-square" >
+				      </a>
+				      </td>
+				      
+				      <td>
+				      <a href="${pageContext.request.contextPath}/user/delete?userId=${usuario.getId()}" 
+				      	class="bi bi-trash">
+				      </a>
+				      
+				      </td>
+				      
 				    </tr>
 				  </c:forEach>
 				</tbody>
