@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.RequestDispatcher;
@@ -14,9 +13,9 @@ import model.ModelException;
 import model.User;
 import model.dao.DAOFactory;
 import model.dao.UserDAO;
+import model.utils.PasswordEncryptor;
 
-//Rotas
-@WebServlet(urlPatterns = {"", "/user/create", "/user/update", "/user/delete"})
+@WebServlet(urlPatterns = {"/users", "/user/save", "/user/update", "/user/delete"})
 public class UsersController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -26,114 +25,146 @@ public class UsersController extends HttpServlet {
 			throws ServletException, IOException {
 
 		String action = req.getRequestURI();
+
 		System.out.println(action);
 
 		switch (action) {
-		case "/facebook/": {
-			// Listagem dos usuários
-			listUsers(req);
+		case "/facebook/users": {
+			
+			// Carregar a lista de usuários do banco
+			loadUsers(req);
 
-			// Redirecionar para a página de exibição (index)
-			RequestDispatcher rd = req.getRequestDispatcher("index.jsp");
+			RequestDispatcher rd = req.getRequestDispatcher("users.jsp");
 			rd.forward(req, resp);
 			break;
 		}
-		case "/facebook/user/create" : {
+		case "/facebook/user/save": {
 
-			saveUser(req);
+			String userId = req.getParameter("user_id");
+			if (userId != null && !userId.equals(""))
+				updateUser(req);
+			else insertUser(req);
 
-			// Redireciona para a listagem 
-			resp.sendRedirect("/facebook");
+			resp.sendRedirect("/facebook/users");			
 			break;
 		}
+		case "/facebook/user/update": {
 
-		case "/facebook/user/update" : {
+			loadUser(req);
 
-			String userIdStr = req.getParameter("userId");
-			int userId = Integer.parseInt(userIdStr);
-
-			UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-
-			User user = new User();
-			try {
-				user = dao.findById(userId);
-			} catch (ModelException e) {
-				// Tratar erro depois
-				e.printStackTrace();
-			}
-
-			req.setAttribute("usuario", user);
 			RequestDispatcher rd = req.getRequestDispatcher("/form_user.jsp");
 			rd.forward(req, resp);
-
+			break;
+		} case "/facebook/user/delete": {
+			
+			deleteUser(req);
+			
+			resp.sendRedirect("/facebook/users");
 			break;
 		}
-		case "/facebook/user/delete" : {
-
-			String userIdStr = req.getParameter("userId");
-			int userId = Integer.parseInt(userIdStr);
-			
-			UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-			User user = new User(userId);
-			
-			try {
-				dao.delete(user);
-			} catch (ModelException e) {
-				// Tratar erro depois
-				e.printStackTrace();
-			}
-
-			// Redireciona para a listagem 
-			resp.sendRedirect("/facebook");
-			break;
-		}
-
 		default:
-			throw new IllegalArgumentException("URL não reconhecida: " + action);
+			throw new IllegalArgumentException("Unexpected value: " + action);
 		}
 	}
 
+	private void deleteUser(HttpServletRequest req) {
+		String userIdString = req.getParameter("userId");
+		int userId = Integer.parseInt(userIdString);
+		
+		User user = new User(userId);
+		
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+		
+		try {
+			dao.delete(user);
+		} catch (ModelException e) {
+			// log no servidor
+			e.getCause().printStackTrace();
+			e.printStackTrace();
+		}
+	}
 
-	private void listUsers(HttpServletRequest req) {
+	private void updateUser(HttpServletRequest req) {
+		User user = createUser(req);
+
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
 
-		List<User> users = new ArrayList<User>();
+		try {
+			dao.update(user);
+		} catch (ModelException e) {
+			// log no servidor
+			e.printStackTrace();
+		}
+	}
+
+	private User createUser(HttpServletRequest req) {
+		String userId = req.getParameter("user_id");
+		String userName = req.getParameter("user_name");
+		String userGender = req.getParameter("user_gender");
+		String userEMail = req.getParameter("user_email");
+		
+		String userPW = req.getParameter("user_pw");
+		if (!userPW.equals(""))
+			userPW = PasswordEncryptor.hashPassword(userPW);
+
+		User user;
+		if (userId.equals(""))
+			user = new User();
+		else user = new User(Integer.parseInt(userId));
+		
+		user.setName(userName);
+		user.setGender(userGender);
+		user.setEmail(userEMail);
+		user.setPassword(userPW);
+		
+		return user;
+	}
+
+	private void loadUser(HttpServletRequest req) {
+		String userIdParameter = req.getParameter("userId");
+
+		int userId = Integer.parseInt(userIdParameter);
+
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+
+		try {
+			User user = dao.findById(userId);
+
+			if (user == null)
+				throw new ModelException("Usuário não encontrado para alteração");
+			
+			req.setAttribute("usuario", user);
+		} catch (ModelException e) {
+			// log no servidor
+			e.printStackTrace();
+		}
+	}
+
+	private void insertUser(HttpServletRequest req) {
+		User user = createUser(req);
+
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+
+		try {
+			dao.save(user);
+		} catch (ModelException e) {
+			// log no servidor
+			e.printStackTrace();
+		}
+	}
+
+	private void loadUsers(HttpServletRequest req) {
+		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
+
+		List<User> users = null;
 		try {
 			users = dao.listAll();
 		} catch (ModelException e) {
+			// Log no servidor
 			e.printStackTrace();
 		}
 
-		req.setAttribute("usuarios", users);
-	}
-
-	private void saveUser(HttpServletRequest req) {
-		// Recuperando os parametros da requisição
-		// Imputs (name) do HTML
-		String userIdStr = req.getParameter("user_id");
-		String userName = req.getParameter("user_name");
-		String userGender = req.getParameter("user_gender");
-		String userEmail = req.getParameter("user_email");
-
-		boolean newUser = userIdStr.equals(""); 
-				
-		// Cria e seta os valores do usuário
-		User user = newUser ? new User() : new User(Integer.parseInt(userIdStr));
-		user.setName(userName);
-		user.setGender(userGender);
-		user.setEmail(userEmail);
-
-		// Salva o usuário no Banco
-		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-		try {
-			if (newUser) 
-				dao.save(user);
-			else 
-				dao.update(user);
-			
-		} catch (ModelException e) {
-			System.err.println("Erro ao salvar usuário");
-			e.printStackTrace();
-		}		
+		if (users != null)
+			req.setAttribute("usuarios", users);
 	}
 }
