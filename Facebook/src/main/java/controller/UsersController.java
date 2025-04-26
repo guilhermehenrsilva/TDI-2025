@@ -133,7 +133,7 @@ public class UsersController extends HttpServlet {
 			if (user == null)
 				throw new ModelException("Usuário não encontrado para alteração");
 			
-			req.setAttribute("usuario", user);
+			req.setAttribute("usuarios", user);
 		} catch (ModelException e) {
 			// log no servidor
 			e.printStackTrace();
