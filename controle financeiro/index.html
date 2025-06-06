@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <title>Controle Financeiro</title>
 </head>
 
@@ -39,10 +40,10 @@
             <h3>Descrição</h3>
           </label>
           <input autofocus
-           type="text" 
-           id="descricao" 
-           placeholder="Descrição da transação" 
-           />
+            type="text" 
+            id="descricao" 
+            placeholder="Descrição da transação" 
+          />
         </div>
 
         <div class="form-control">
@@ -50,17 +51,15 @@
             <h3>Valor R$</h3>
           </label>
           <input
-           type="number"
-           id="montante" 
-           placeholder="Valor da transação em R$" />
+            type="number"
+            id="montante" 
+            placeholder="Valor da transação em R$" 
+          />
           
           <input type="radio" name="radSinal" id="R">
           <label for="R">Receitas</label>
           <input type="radio" name="radSinal" id="D">
           <label for="D">Despesas</label>
-
-
-
         </div>
 
         <button class="btn">Adicionar</button>
@@ -78,13 +77,17 @@
       </ul>
     </div>
   </div>
-  <header class="final">
-    <h5>Desenvolvido por Guilherme</h5>
-  </header>
+
+  <footer class="final" style="text-align: center; margin-top: 20px;">
+  <h5>
+    Desenvolvido por Guilherme Henrique
+    <a href="https://github.com/seu-usuario" target="_blank" style="margin-left: 10px; color: inherit;">
+      <i class="fab fa-github fa-2x"></i>
+    </a>
+  </h5>
+</footer>
 
   <script src="controle.js"></script>
 </body>
-
-
 
 </html>
