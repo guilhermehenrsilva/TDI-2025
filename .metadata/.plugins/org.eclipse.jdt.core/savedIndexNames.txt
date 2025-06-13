@@ -1,8 +1,0 @@
-INDEX VERSION 1.134+C:\Users\guilh\Desktop\Git Facul\TDI-2025\.metadata\.plugins\org.eclipse.jdt.core
-803184238.index
-3987628598.index
-576176954.index
-1865601047.index
-120897594.index
-3966467886.index
-1865797976.index
