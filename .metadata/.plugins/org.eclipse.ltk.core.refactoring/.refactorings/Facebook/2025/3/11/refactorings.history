@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;controler&apos; to &apos;controller&apos;&#x0D;&#x0A;- Original project: &apos;Facebook&apos;&#x0D;&#x0A;- Original element: &apos;Facebook/src/main/java/controler&apos;&#x0D;&#x0A;- Renamed element: &apos;Facebook/src/main/java/controller&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;controler&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src\/main\/java&lt;controler" name="controller" qualified="false" references="true" stamp="1742001660029" textual="false" version="1.0"/>
+</session>
