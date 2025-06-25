@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <div th:replace="cabecalho :: head"></div>
+  </head>
+  <body>
+    <div class="container my-3">
+        <h1>Usuários</h1>
+        <div>
+            <a th:href="@{/users/form}" href="#" class="btn btn-primary mb-3 float-rigth">Adicionar Usuário</a>
+        </div>
+    </div>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${usuarios}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.gender}"></td>
+                <td th:text="${user.email}"></td>
+            </tr>
+        </tbody>
+    </table>
+  </body>
+</html>
